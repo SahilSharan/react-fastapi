@@ -4,7 +4,11 @@ import "./App.css";
 
 const App = () => {
   const [keyword, setKeyword] = useState("");
-  const [jobs, setJobs] = useState([]);
+  const [jobs, setJobs] = useState([
+    { job_title: "Frontend Developer", company_name: "Amazon" },
+    { job_title: "Backend Developer", company_name: "Google" },
+    { job_title: "Fullstack Engineer", company_name: "DexyAI" },
+  ]); // Initial dummy data
   const [loading, setLoading] = useState(false);
 
   const startScraping = async () => {
