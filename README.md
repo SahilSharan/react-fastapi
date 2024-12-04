@@ -2,6 +2,8 @@
 
 This project is a full-stack application that allows users to search and scrape job listings from Wellfound (formerly AngelList). It uses **FastAPI** for the backend and **React** with **Vite** for the frontend. The app allows users to input keywords and retrieve a list of jobs matching those keywords. The job data is fetched from the backend and displayed dynamically in a responsive and visually appealing card layout.
 
+![image alt](https://github.com/SahilSharan/react-fastapi/blob/383e4cf3eaefe9ab6710dfd711f834e1bbd6f06c/Screenshot%202024-12-04%20225708.png)
+
 ## Features
 - Scrape job listings from Wellfound using FastAPI.
 - Display scraped job data in a responsive, visually appealing grid layout.
