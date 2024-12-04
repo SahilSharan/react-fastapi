@@ -26,7 +26,7 @@ def scrape_wellfound(keywords: str):
     job_data_list.clear()
 
     # Extract job data (adjust the selectors based on the website)
-    job_listings = soup.find_all('div', class_='job-listing')  # Adjust the class names
+    job_listings = soup.find_all('div', class_='job-listing')  # Adjusting the class names
     for job_listing in job_listings:
         company_name = job_listing.find('a', class_='company-name').text.strip() if job_listing.find('a', class_='company-name') else "N/A"
         job_title = job_listing.find('h3', class_='job-title').text.strip() if job_listing.find('h3', class_='job-title') else "N/A"

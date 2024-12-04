@@ -1,95 +1,72 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "./App.css";
 
 const App = () => {
-  const [keyword, setKeyword] = useState(""); // For the search input
-  const [jobs, setJobs] = useState([]);      // Store job data
-  const [loading, setLoading] = useState(false); // Loading state
+  const [keyword, setKeyword] = useState("");
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // Trigger the scraping process
   const startScraping = async () => {
     if (!keyword) {
       alert("Please enter a keyword.");
       return;
     }
-    setLoading(true); // Set loading state
+    setLoading(true);
     try {
-      // Start scraping by calling the /scrape endpoint
-      await axios.post("http://localhost:8000/scrape", { keywords: keyword }); 
-      alert("Scraping started. Automatically refreshing for updates...");
-  
-      // Poll the /jobs endpoint every 3 seconds to check for scraped data
+      await axios.get(`http://localhost:8000/scrape?keywords=${keyword}`);
       const interval = setInterval(async () => {
         const response = await axios.get("http://localhost:8000/jobs");
-        
         if (response.data.length > 0) {
-          setJobs(response.data); // Update state with the fetched job data
-          clearInterval(interval); // Stop polling once data is available
-          alert("Scraping complete! Jobs have been fetched.");
+          setJobs(response.data);
+          clearInterval(interval);
         }
-      }, 3000); // Poll every 3 seconds
+      }, 3000);
     } catch (error) {
-      console.error("Error starting scrape:", error);
+      console.error("Error:", error);
       alert("Error starting scraping process.");
     }
-    setLoading(false); // Clear loading state
-  };
-  
-
-  // Fetch scraped jobs
-  const fetchJobs = async () => {
-    setLoading(true); // Set loading state
-    try {
-      const response = await axios.get("http://localhost:8000/jobs"); // Call the backend /jobs endpoint
-      setJobs(response.data); // Store the data
-    } catch (error) {
-      console.error("Error fetching jobs:", error);
-      alert("Error fetching jobs.");
-    }
-    setLoading(false); // Clear loading state
+    setLoading(false);
   };
 
   return (
-    <div style={{ fontFamily: "Arial", margin: "2rem" }}>
-      <h1>Job Scraper</h1>
-      <input
-        type="text"
-        placeholder="Enter keyword"
-        value={keyword}
-        onChange={(e) => setKeyword(e.target.value)}
-        style={{ marginRight: "1rem", padding: "0.5rem", fontSize: "1rem" }}
-      />
-      <button onClick={startScraping} style={{ padding: "0.5rem 1rem" }}>
-        Scrape Jobs
-      </button>
-      <button onClick={fetchJobs} style={{ padding: "0.5rem 1rem", marginLeft: "1rem" }}>
-        Refresh Jobs
-      </button>
+    <div className="app">
+      {/* Header Section */}
+      <header className="header">
+        <h1>Wellfound Jobs</h1>
+        <p>Find your dream job with just one click!</p>
+      </header>
 
-      {loading && <p>Loading...</p>}
-
-      <table border="1" style={{ marginTop: "2rem", width: "100%" }}>
-        <thead>
-          <tr>
-            <th>Company Name</th>
-            <th>Job Title</th>
-          </tr>
-        </thead>
-        <tbody>
-          {jobs.length > 0 ? (
-            jobs.map((job, index) => (
-              <tr key={index}>
-                <td>{job.company_name}</td>
-                <td>{job.job_title}</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="2">No jobs available. Start scraping!</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      {/* Main Content */}
+      <div className="main-container">
+        <div className="form-container">
+          <input
+            className="input-keyword"
+            type="text"
+            placeholder="Enter keyword"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+          />
+          <button className="button-scrape" onClick={startScraping}>
+            Scrape Jobs
+          </button>
+        </div>
+        {loading ? (
+          <div className="spinner"></div>
+        ) : jobs.length > 0 ? (
+          <div className="card-container">
+            {jobs.map((job, index) => (
+              <div key={index} className="card">
+                <h3>{job.job_title}</h3>
+                <p>{job.company_name}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="no-jobs-text">No jobs found yet. Start scraping to view results.</p>
+        )}
+        <div className="footer">Made with ❤️ </div>
+      </div>
     </div>
   );
 };
