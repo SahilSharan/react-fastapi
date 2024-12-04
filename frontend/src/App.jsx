@@ -14,14 +14,27 @@ const App = () => {
     }
     setLoading(true); // Set loading state
     try {
-      await axios.post("http://localhost:8000/scrape", { keywords: keyword }); // Call the backend /scrape endpoint
-      alert("Scraping started. Please refresh to get data.");
+      // Start scraping by calling the /scrape endpoint
+      await axios.post("http://localhost:8000/scrape", { keywords: keyword }); 
+      alert("Scraping started. Automatically refreshing for updates...");
+  
+      // Poll the /jobs endpoint every 3 seconds to check for scraped data
+      const interval = setInterval(async () => {
+        const response = await axios.get("http://localhost:8000/jobs");
+        
+        if (response.data.length > 0) {
+          setJobs(response.data); // Update state with the fetched job data
+          clearInterval(interval); // Stop polling once data is available
+          alert("Scraping complete! Jobs have been fetched.");
+        }
+      }, 3000); // Poll every 3 seconds
     } catch (error) {
       console.error("Error starting scrape:", error);
       alert("Error starting scraping process.");
     }
     setLoading(false); // Clear loading state
   };
+  
 
   // Fetch scraped jobs
   const fetchJobs = async () => {
